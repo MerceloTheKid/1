@@ -132,8 +132,10 @@ export default function CallesMostrar(){
                             setRegionActual(e.target.value);
                             getProvincias(e.target.value);
                             getCiudades(e.target.value);
+                            setNombreCalle(' ');
                             setProvinciaUsar(false);
                             setCiudadUsar(true);
+                            setCalleUsar(true);
                         }
                         }>
                         {regiones.map((region)=>{
@@ -156,6 +158,7 @@ export default function CallesMostrar(){
                         setProvinciaActual(e.target.value);
                         getCiudades(e.target.value);
                         setCiudadUsar(false);
+                        setCalleUsar(true);
                     }
                 }>
                 {provincias.map((provincia)=>{
