@@ -25,8 +25,9 @@ export default function CallesMostrar(){
     const [ciudadActual, setCiudadActual] = useState();
     const [nombreCalle, setNombreCalle] = useState('');
 
-    const [provinciaUsar, setProvinciaUsar] = useState(false);
-    const [ciudadUsar, setCiudadUsar] = useState(false);
+    const [provinciaUsar, setProvinciaUsar] = useState(true);
+    const [ciudadUsar, setCiudadUsar] = useState(true);
+    const [calleUsar, setCalleUsar] = useState(true);
 
     const getRegiones = async () => {//recive las Regiones de la api
         const response = await fetch(`http://localhost:8000/api/regiones`);
@@ -175,6 +176,7 @@ export default function CallesMostrar(){
               sx={{ minWidth: 220 }}
                 onChange={(e) => {
                         setCiudadActual(e.target.value);
+                        setCalleUsar(false);
                     }
                 }>
                 {ciudades.map((ciudad)=>{
@@ -186,6 +188,7 @@ export default function CallesMostrar(){
                 <div>
                 
                     <TextField
+                        disabled = {calleUsar}
                         required
                         id="outlined-required"
                         label="Required"
@@ -194,6 +197,7 @@ export default function CallesMostrar(){
                         
                     />
                     <Button variant="contained" 
+                    disabled = {calleUsar}
                     onClick={() => agregarCalle(ciudadActual.id)}
                     style = {{left : "10px"}}> 
                         Agregar calle
