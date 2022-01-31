@@ -4,11 +4,9 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import Calles from './Components/Calles'
-import CallesAgregar from './Components/CallesAgregar'
 
 ReactDOM.render(
   <React.StrictMode>
-    <CallesAgregar/>
     <Calles/>
   </React.StrictMode>,
   document.getElementById('root')

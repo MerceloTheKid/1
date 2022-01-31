@@ -11,10 +11,55 @@ import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import FormControl from '@mui/material/FormControl';
 import { TextField } from '@mui/material';
-
+import InputLabel from '@mui/material/InputLabel';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
 
 export default function CallesMostrar(){
+    const [regiones, setRegiones] = useState([]);
+    const [provincias, setProvincias] = useState([]);
+    const [ciudades, setCiudades] = useState([]);
 
+    const [regionActual, setRegionActual] = useState();
+    const [provinciaActual, setProvinciaActual] = useState();
+    const [ciudadActual, setCiudadActual] = useState();
+    const [nombreCalle, setNombreCalle] = useState('');
+
+    const [provinciaUsar, setProvinciaUsar] = useState(false);
+    const [ciudadUsar, setCiudadUsar] = useState(false);
+
+    const getRegiones = async () => {//recive las Regiones de la api
+        const response = await fetch(`http://localhost:8000/api/regiones`);
+        const data = await response.json();
+        setRegiones(data);
+    }
+    const getProvincias = async (id) => {
+        console.log(id);
+        const response = await fetch(`http://localhost:8000/api/regiones/provincias/${id}`);
+        const data = await response.json();
+        setProvincias(data);
+    }
+
+    const getCiudades = async (id) => {//recive las Ciudades de una provincia desde la api
+        const response2 = await fetch(`http://localhost:8000/api/provincias/ciudades/${id}`);
+        const data2 = await response2.json();
+        setCiudades(data2);
+        setCiudadActual(data2[0]);
+    }
+
+    function agregarCalle(){
+        
+        const response = fetch(`http://localhost:8000/api/calles/`,{
+            method: 'post',
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({  cal_nombre: nombreCalle, ciu_id: ciudadActual})
+        }).then((response) =>{
+            if(response.status == 201){
+                getCalles();
+            }else{
+                getCalles();
+            }})
+    }
     const [counter, setCounter] = useState([]);
     const [eliminar, setEliminar] = useState([]);
     
@@ -64,16 +109,100 @@ export default function CallesMostrar(){
 
     useEffect(()=>{
         getCalles();
+        getRegiones();
     }, []);
     
          
     return(
         
         <div>
-            <h1>Listado de calles</h1>
-            <div>
+<h1>Agregar calles</h1>
+            <FormControl>
+                <InputLabel id="Regiones-Disponibles" style = {{left : "10px"}}>Región</InputLabel>
+                    <Select
+                    style = {{left : "10px"}}
+                        labelId="Regiones-Disponibles"
+                        id="simple-region"
+                        value={regionActual}
+                        label="Regiones"
+                        sx={{ minWidth: 220 }}
+                        onChange={(e) => {
+                            console.log(e.target.value);
+                            setRegionActual(e.target.value);
+                            getProvincias(e.target.value);
+                            getCiudades(e.target.value);
+                            setProvinciaUsar(false);
+                            setCiudadUsar(true);
+                        }
+                        }>
+                        {regiones.map((region)=>{
+                            return <MenuItem value={region.id}>{region.reg_nombre}</MenuItem>
+                        })}
+                    </Select>
+            </FormControl>
+
+            <FormControl>
+            <InputLabel id="Provincias-Disponibles" style = {{left : "20px"}}>Provincias</InputLabel>
+            <Select
+                style = {{left : "20px"}}
+                labelId="Provincias-Disponibles"
+                disabled = {provinciaUsar}
+                id="simple-Provincias"
+                value={provinciaActual}
+                label="Provincias"
+                sx={{ minWidth: 220 }}
+                onChange={(e) => {
+                        setProvinciaActual(e.target.value);
+                        getCiudades(e.target.value);
+                        setCiudadUsar(false);
+                    }
+                }>
+                {provincias.map((provincia)=>{
+                    return <MenuItem value={provincia.id}>{provincia.pro_nombre}</MenuItem>
+                })}
+            </Select>
+            </FormControl>
+
+            <FormControl>
+            <InputLabel id="Provincias-Disponibles" style = {{left : "30px"}}>Ciudades</InputLabel>
+            <Select
+              style = {{left : "30px"}}
+              labelId="Ciudades-Disponibles"
+              id="simple-ciudad"
+              disabled = {ciudadUsar}
+              value={ciudadActual}
+              label="ciudades"
+              sx={{ minWidth: 220 }}
+                onChange={(e) => {
+                        setCiudadActual(e.target.value);
+                    }
+                }>
+                {ciudades.map((ciudad)=>{
+                    return <MenuItem value={ciudad.id}>{ciudad.ciu_nombre}</MenuItem>
+                })}
+            </Select>
+            </FormControl>
+            <FormControl style = {{left : "40px"}}>
+                <div>
+                
+                    <TextField
+                        required
+                        id="outlined-required"
+                        label="Required"
+                        defaultValue={nombreCalle}
+                        onChange={e => setNombreCalle(e.target.value)}
+                        
+                    />
+                    <Button variant="contained" 
+                    onClick={() => agregarCalle(ciudadActual.id)}
+                    style = {{left : "10px"}}> 
+                        Agregar calle
+                    </Button>
+                </div>
+            </FormControl>
             
-</div>
+            <h1>Listado de calles</h1>
+            
             <TableContainer component={Paper}>
             <Table sx={{minWidth: 650 }} aria-label= "Calles Existentes">
                     <TableHead>
