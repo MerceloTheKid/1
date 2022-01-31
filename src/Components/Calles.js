@@ -132,7 +132,6 @@ export default function CallesMostrar(){
                             setRegionActual(e.target.value);
                             getProvincias(e.target.value);
                             getCiudades(e.target.value);
-                            setNombreCalle(' ');
                             setProvinciaUsar(false);
                             setCiudadUsar(true);
                             setCalleUsar(true);
